@@ -11,7 +11,7 @@ import {
 import { LocalAuthGuard } from '../auth/guards/local-auth.guard';
 import { AuthService } from '../auth/auth.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { UsersService } from './users.service';
+import { UserService } from './user.service';
 import { AuthUser } from '../common/decorators/auth-user.decorator';
 import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -20,7 +20,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 export class UserController {
   constructor(
     private authService: AuthService,
-    private userService: UsersService,
+    private userService: UserService,
   ) {}
 
   @Post('register')
