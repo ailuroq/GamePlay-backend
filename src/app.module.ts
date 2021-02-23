@@ -3,9 +3,12 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { UserController } from './user/user.controller';
+import { FileUploadingController } from './user/file.uploading.controller';
 import { User } from './user/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
+import { MulterModule } from '@nestjs/platform-express';
+import { Image } from './user/image.entity';
 
 @Module({
   imports: [
@@ -16,14 +19,17 @@ import { Connection } from 'typeorm';
       username: 'postgres',
       password: 'root',
       database: 'gameplay',
-      entities: [User],
+      entities: [User, Image],
       synchronize: true,
       autoLoadEntities: true,
+    }),
+    MulterModule.register({
+      dest: './uploads',
     }),
     AuthModule,
     UserModule,
   ],
-  controllers: [UserController],
+  controllers: [UserController, FileUploadingController],
   providers: [AppService],
 })
 export class AppModule {
