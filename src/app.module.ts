@@ -8,7 +8,6 @@ import { User } from './user/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { MulterModule } from '@nestjs/platform-express';
-import { Image } from './user/image.entity';
 
 @Module({
   imports: [
@@ -19,7 +18,7 @@ import { Image } from './user/image.entity';
       username: 'postgres',
       password: 'root',
       database: 'gameplay',
-      entities: [User, Image],
+      entities: [User],
       synchronize: true,
       autoLoadEntities: true,
     }),

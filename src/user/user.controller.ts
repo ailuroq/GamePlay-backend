@@ -22,6 +22,7 @@ export class UserController {
 
   @Post('auth/signup')
   async create(@Body() userDto: CreateUserDto): Promise<User> {
+    userDto.avatarName = 'defaultAvatar.png';
     return this.userService.create(userDto);
   }
 

@@ -3,15 +3,12 @@ import { getConnection, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
-import { Image } from './image.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    @InjectRepository(Image)
-    private imageRepository: Repository<Image>,
   ) {}
 
   findAll(): Promise<User[]> {
@@ -34,13 +31,10 @@ export class UserService {
   }
 
   async createAvatar(filename: string, user: User) {
-    const avatar = new Image();
-    avatar.name = filename;
-    await this.imageRepository.save(avatar);
     await getConnection()
       .createQueryBuilder()
       .update(User)
-      .set({ avatar: avatar })
+      .set({ avatarName: filename })
       .where('id = :id', { id: user.id })
       .execute();
   }
