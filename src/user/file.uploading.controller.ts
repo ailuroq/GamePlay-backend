@@ -48,6 +48,12 @@ export class FileUploadingController {
     return this.userService.createAvatar(file.filename, req.user);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('delete/avatar')
+  async deleteAvatar(@Request() req) {
+    return this.userService.deleteAvatar(req.user);
+  }
+
   @Get('uploads/:imgPath')
   seeUploadedFile(@Param('imgPath') image, @Res() res) {
     return res.sendFile(image, { root: './uploads' });

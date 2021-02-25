@@ -38,4 +38,13 @@ export class UserService {
       .where('id = :id', { id: user.id })
       .execute();
   }
+
+  async deleteAvatar(user: User) {
+    await getConnection()
+      .createQueryBuilder()
+      .update(User)
+      .set({ avatarName: 'defaultAvatar.png' })
+      .where('id = :id', { id: user.id })
+      .execute();
+  }
 }
