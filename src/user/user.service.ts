@@ -23,8 +23,8 @@ export class UserService {
     return this.userRepository.findOne({ id: id });
   }
 
-  create(userDto: CreateUserDto): Promise<User> {
-    const user = this.findOne(userDto.username);
+  async create(userDto: CreateUserDto): Promise<User> {
+    const user = await this.findOne(userDto.username);
     if (!user) {
       return this.userRepository.save(userDto);
     }
