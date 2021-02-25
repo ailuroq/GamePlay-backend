@@ -45,8 +45,6 @@ export class FileUploadingController {
     }),
   )
   async uploadFile(@UploadedFile() file, @Request() req) {
-    console.log(file);
-    console.log(req.user);
     return this.userService.createAvatar(file.filename, req.user);
   }
 
