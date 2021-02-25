@@ -5,6 +5,8 @@ import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { DEFAULT_USER_AVATAR } from '../app.constants';
 
+import * as bcrypt from 'bcrypt';
+
 @Injectable()
 export class UserService {
   constructor(
@@ -26,6 +28,8 @@ export class UserService {
   async create(userDto: CreateUserDto): Promise<User> {
     const user = await this.findOne(userDto.username);
     if (!user) {
+      userDto.avatarName = DEFAULT_USER_AVATAR;
+      userDto.password = await bcrypt.hash(userDto.password, 10);
       return this.userRepository.save(userDto);
     }
     throw new HttpException(

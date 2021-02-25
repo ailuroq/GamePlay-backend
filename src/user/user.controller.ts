@@ -14,7 +14,7 @@ import { UserService } from './user.service';
 import { AuthUser } from '../common/decorators/auth-user.decorator';
 import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
-import { DEFAULT_USER_AVATAR } from '../app.constants';
+
 @Controller()
 export class UserController {
   constructor(
@@ -24,7 +24,6 @@ export class UserController {
 
   @Post('auth/signup')
   async create(@Body() userDto: CreateUserDto): Promise<User> {
-    userDto.avatarName = DEFAULT_USER_AVATAR;
     return this.userService.create(userDto);
   }
 
