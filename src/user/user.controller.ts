@@ -4,8 +4,8 @@ import {
   Post,
   UseGuards,
   Get,
-  Body,
-} from '@nestjs/common';
+  Body, Param
+} from "@nestjs/common";
 import { LocalAuthGuard } from '../auth/guards/local-auth.guard';
 import { AuthService } from '../auth/auth.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -33,10 +33,9 @@ export class UserController {
     return this.authService.login(req.user);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('profile/')
-  getProfile(@AuthUser() user: User) {
-    return user;
+  @Get(':username/')
+  getProfile(@Param() params) {
+    return this.userService.findOne(params.username);
   }
 
   @UseGuards(JwtAuthGuard)
