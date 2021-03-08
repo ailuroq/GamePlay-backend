@@ -2,7 +2,6 @@ import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../src/user/user.entity';
 import { MulterModule } from '@nestjs/platform-express';
 import { AuthModule } from '../src/auth/auth.module';
 import { UserModule } from '../src/user/user.module';
@@ -10,6 +9,7 @@ import { UserController } from '../src/user/user.controller';
 import { FileUploadingController } from '../src/user/file.uploading.controller';
 import { AppService } from '../src/app.service';
 import { getConnection } from 'typeorm';
+import { GamesModule } from '../src/games/games.module';
 
 describe('App tests', () => {
   let app: INestApplication;
@@ -33,6 +33,7 @@ describe('App tests', () => {
         }),
         AuthModule,
         UserModule,
+        GamesModule,
       ],
       controllers: [UserController, FileUploadingController],
       providers: [AppService],
