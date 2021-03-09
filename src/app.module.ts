@@ -16,7 +16,7 @@ import { MulterModule } from '@nestjs/platform-express';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: 'School123',
+      password: 'root',
       database: 'gameplay',
       entities: [User],
       synchronize: true,
