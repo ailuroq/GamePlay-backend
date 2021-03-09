@@ -117,6 +117,8 @@ describe('App tests', () => {
         email: user.email,
         password: expect.any(String),
         avatarName: 'defaultAvatar.jpeg',
+        subscribers: expect.any(Array),
+        friends: expect.any(Array),
       });
     });
   });
