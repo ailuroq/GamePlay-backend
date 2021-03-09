@@ -41,7 +41,7 @@ export class User {
     }
     return responseObject
   }
-=======
+  
   @OneToMany(() => UserGames, (userGames) => userGames.user)
   userGames: UserGames[];
 }
