@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, OneToMany, JoinTable } from 'typeorm';
 import { UserRO } from './users.ro';
+import { UserGames } from '../games/common/entities/userGames.entity';
 
 @Entity()
 export class User {
@@ -40,4 +41,7 @@ export class User {
     }
     return responseObject
   }
+=======
+  @OneToMany(() => UserGames, (userGames) => userGames.user)
+  userGames: UserGames[];
 }

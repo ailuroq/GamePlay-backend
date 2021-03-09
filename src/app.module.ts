@@ -4,10 +4,10 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { UserController } from './user/user.controller';
 import { FileUploadingController } from './user/file.uploading.controller';
-import { User } from './user/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { MulterModule } from '@nestjs/platform-express';
+import { GamesModule } from './games/games.module';
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import { MulterModule } from '@nestjs/platform-express';
       username: 'postgres',
       password: 'root',
       database: 'gameplay',
-      entities: [User],
+      entities: ['../src/**/*.entity.ts'],
       synchronize: true,
       autoLoadEntities: true,
     }),
@@ -27,6 +27,7 @@ import { MulterModule } from '@nestjs/platform-express';
     }),
     AuthModule,
     UserModule,
+    GamesModule,
   ],
   controllers: [UserController, FileUploadingController],
   providers: [AppService],
