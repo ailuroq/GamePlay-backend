@@ -22,7 +22,7 @@ describe('App tests', () => {
           host: 'localhost',
           port: 5432,
           username: 'postgres',
-          password: 'root',
+          password: 'School123',
           database: 'gameplay_test',
           entities: ['../src/**/*.entity.ts'],
           synchronize: true,
@@ -116,6 +116,8 @@ describe('App tests', () => {
         email: user.email,
         password: expect.any(String),
         avatarName: 'defaultAvatar.jpeg',
+        subscribers: expect.any(Array),
+        friends: expect.any(Array),
       });
     });
   });

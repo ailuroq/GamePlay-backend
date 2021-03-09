@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import { UserRO } from './users.ro';
 
 @Entity()
 export class User {
@@ -16,4 +17,27 @@ export class User {
 
   @Column()
   avatarName: string;
+
+  @ManyToMany(type => User, {cascade: true})
+  @JoinTable()
+  subscribers: User[]
+
+  @ManyToMany(type => User, {cascade: true})
+  @JoinTable()
+  friends: User[]
+
+  toResponseObject(showPassword: boolean = true): UserRO {
+    const { id, username, email, avatarName, password } = this;
+    const responseObject : any = { id, username, email, avatarName };
+    if (showPassword){
+      responseObject.password = password
+    }
+    if (this.subscribers){
+      responseObject.subscribers = this.subscribers
+    }
+    if (this.friends){
+      responseObject.friends = this.friends
+    }
+    return responseObject
+  }
 }
