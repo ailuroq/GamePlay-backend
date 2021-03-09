@@ -22,7 +22,7 @@ describe('App tests', () => {
           host: 'localhost',
           port: 5432,
           username: 'postgres',
-          password: 'School123',
+          password: 'root',
           database: 'gameplay_test',
           entities: ['../src/**/*.entity.ts'],
           synchronize: true,
