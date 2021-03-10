@@ -12,10 +12,10 @@ export class SnakeGame {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ default: 0 })
   maxScore: number;
 
-  @Column()
+  @Column({ default: 0 })
   lastScore: number;
 
   @OneToOne(() => User)

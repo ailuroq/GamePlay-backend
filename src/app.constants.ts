@@ -1,4 +1,5 @@
 export const USER_REPOSITORY = 'USER_REPOSITORY';
+export const SNAKE_GAME_REPOSITORY = 'SNAKE_GAME_REPOSITORY';
 export const DATABASE_CONNECTION = 'DATABASE_CONNECTION';
 
 export const DEFAULT_USER_AVATAR = 'defaultAvatar.jpeg';
