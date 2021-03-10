@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { UserService } from './user.service';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { UserService } from '../services/user.service';
 import { extname } from 'path';
 
 @Controller()

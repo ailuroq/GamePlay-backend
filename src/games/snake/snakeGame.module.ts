@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeGame } from './entities/snakeGame.entity';
 import { SnakeGameService } from './services/snakeGame.service';
 import { SnakeGameController } from './controllers/snakeGame.controller';
-import { User } from '../../user/user.entity';
+import { User } from '../../user/entities/user.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, SnakeGame])],

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SnakeGame } from '../entities/snakeGame.entity';
 import { getConnection, Repository } from 'typeorm';
-import { User } from '../../../user/user.entity';
+import { User } from '../../../user/entities/user.entity';
 
 @Injectable()
 export class SnakeGameService {
