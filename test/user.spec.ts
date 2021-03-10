@@ -5,8 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
 import { AuthModule } from '../src/auth/auth.module';
 import { UserModule } from '../src/user/user.module';
-import { UserController } from '../src/user/user.controller';
-import { FileUploadingController } from '../src/user/file.uploading.controller';
 import { AppService } from '../src/app.service';
 import { getConnection } from 'typeorm';
 import { GamesModule } from '../src/games/games.module';
@@ -35,7 +33,6 @@ describe('App tests', () => {
         UserModule,
         GamesModule,
       ],
-      controllers: [UserController, FileUploadingController],
       providers: [AppService],
     }).compile();
 

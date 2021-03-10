@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
-import { UserController } from './user/user.controller';
-import { FileUploadingController } from './user/file.uploading.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { MulterModule } from '@nestjs/platform-express';
@@ -29,7 +27,6 @@ import { GamesModule } from './games/games.module';
     UserModule,
     GamesModule,
   ],
-  controllers: [UserController, FileUploadingController],
   providers: [AppService],
 })
 export class AppModule {
