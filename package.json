@@ -21,7 +21,9 @@
     "test:e2e": "jest --config test/jest.json"
   },
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
     "@nestjs/common": "^7.5.1",
+    "@nestjs/config": "^0.6.3",
     "@nestjs/core": "^7.5.1",
     "@nestjs/jwt": "^7.2.0",
     "@nestjs/passport": "^7.1.5",
@@ -30,6 +32,7 @@
     "@nestjs/typeorm": "^7.1.5",
     "@nestjs/websockets": "^7.6.13",
     "@types/bcrypt": "^3.0.0",
+    "@types/hapi__joi": "^17.1.6",
     "bcrypt": "^5.0.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",

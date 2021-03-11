@@ -1,13 +1,14 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
 import { AuthModule } from '../src/auth/auth.module';
 import { UserModule } from '../src/user/user.module';
 import { AppService } from '../src/app.service';
 import { getConnection } from 'typeorm';
 import { GamesModule } from '../src/games/games.module';
+import { ConfigModule } from '@nestjs/config';
+import { TestDatabaseModule } from '../src/database/test.database.module';
 
 describe('App tests', () => {
   let app: INestApplication;
@@ -15,20 +16,11 @@ describe('App tests', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot({
-          type: 'postgres',
-          host: 'localhost',
-          port: 5432,
-          username: 'postgres',
-          password: 'root',
-          database: 'gameplay_test',
-          entities: ['../src/**/*.entity.ts'],
-          synchronize: true,
-          autoLoadEntities: true,
-        }),
+        ConfigModule.forRoot(),
         MulterModule.register({
           dest: './uploads',
         }),
+        TestDatabaseModule,
         AuthModule,
         UserModule,
         GamesModule,
@@ -94,6 +86,7 @@ describe('App tests', () => {
         accessToken: expect.any(String),
       });
     });
+
     it('Getting user profile', async () => {
       const user = {
         username: 'username',
