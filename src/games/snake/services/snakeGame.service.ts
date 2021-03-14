@@ -4,6 +4,8 @@ import { SnakeGame } from '../entities/snakeGame.entity';
 import { getConnection, Repository } from 'typeorm';
 import { User } from '../../../user/entities/user.entity';
 import { SnakeGameResultDto } from '../dto/snakeGameResult.dto';
+import { PaginationDto } from '../dto/pagination.dto';
+import { PaginatedUserTableResultDto } from '../dto/paginatedUserTableResult.dto';
 
 @Injectable()
 export class SnakeGameService {
@@ -66,5 +68,31 @@ export class SnakeGameService {
       },
       HttpStatus.BAD_REQUEST,
     );
+  }
+
+  async getRatingTable(
+    paginationDto: PaginationDto,
+  ): Promise<PaginatedUserTableResultDto> {
+    const skippedItems = (paginationDto.page - 1) * paginationDto.limit;
+
+    const totalCount = await this.snakeGameRepository.count();
+    const table = await getConnection()
+      .getRepository(SnakeGame)
+      .createQueryBuilder('snakeGame')
+      .leftJoinAndSelect('snakeGame.user', 'user')
+      .offset(skippedItems)
+      .limit(paginationDto.limit)
+      .orderBy('snakeGame.maxScore', 'DESC')
+      .getMany();
+
+    const numberOfPages = Math.ceil(totalCount / paginationDto.limit);
+
+    return {
+      totalCount,
+      page: paginationDto.page,
+      limit: paginationDto.limit,
+      data: table,
+      numberOfPages: numberOfPages,
+    };
   }
 }

@@ -21,6 +21,4 @@ import { DatabaseModule } from './database/database.module';
   ],
   providers: [AppService],
 })
-export class AppModule {
-  constructor(private connection: Connection) {}
-}
+export class AppModule {}
