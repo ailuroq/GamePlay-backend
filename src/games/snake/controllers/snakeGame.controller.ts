@@ -37,11 +37,8 @@ export class SnakeGameController {
   }
 
   @Get('rating')
-  async getRatingTable(
-    @Query() paginationDto: PaginationDto,
-  ): Promise<PaginatedUserTableResultDto> {
+  async getRatingTable(@Query() paginationDto: PaginationDto): Promise<PaginatedUserTableResultDto> {
     paginationDto.page = Number(paginationDto.page);
-
     return this.snakeGameService.getRatingTable({
       ...paginationDto,
       limit: 8,

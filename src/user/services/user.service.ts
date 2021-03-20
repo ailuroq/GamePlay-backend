@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { getConnection, Repository } from 'typeorm';
+import { getConnection, getRepository, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -7,16 +7,15 @@ import { DEFAULT_USER_AVATAR } from '../../app.constants';
 
 import * as bcrypt from 'bcrypt';
 import { UserRO } from '../dto/users.ro';
+import { UsersFriendsRo } from '../dto/usersFriends.ro';
+import { UsersSubscribersRo } from '../dto/usersSubscribers.ro';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-  ) {}
-
-  findAll(): Promise<User[]> {
-    return this.userRepository.find();
+  ) {
   }
 
   findOne(username: string): Promise<User> {
@@ -46,12 +45,12 @@ export class UserService {
     );
   }
 
-  async sendRequest(id: number, userId: number): Promise<UserRO> {
+  async sendRequest(username: string, userId: number): Promise<UserRO> {
     const userToAdd = await this.userRepository.findOne({
       where: { id: userId },
     });
     const user = await this.userRepository.findOne({
-      where: { id: id },
+      where: { username: username },
       relations: ['subscribers', 'friends'],
     });
     if (user) {
@@ -78,9 +77,9 @@ export class UserService {
     return user.toResponseObject(false);
   }
 
-  async acceptRequest(id: number, userId: number): Promise<UserRO> {
+  async acceptRequest(username: string, userId: number): Promise<UserRO> {
     const userToAddFriend = await this.userRepository.findOne({
-      where: { id: id },
+      where: { username: username },
     });
     const user = await this.userRepository.findOne({
       where: { id: userId },
@@ -109,9 +108,9 @@ export class UserService {
     return user.toResponseObject(false);
   }
 
-  async cancelRequest(id: number, userId: number): Promise<UserRO> {
+  async cancelRequest(username: string, userId: number): Promise<UserRO> {
     const userToCancelFriendRequest = await this.userRepository.findOne({
-      where: { id: id },
+      where: { username: username },
       relations: ['subscribers', 'friends'],
     });
     const user = await this.userRepository.findOne({
@@ -139,9 +138,9 @@ export class UserService {
     return userToCancelFriendRequest.toResponseObject(false);
   }
 
-  async deleteFriend(id: number, userId: number): Promise<UserRO> {
+  async deleteFriend(username: string, userId: number): Promise<UserRO> {
     const userToDelete = await this.userRepository.findOne({
-      where: { id: id },
+      where: { username: username },
     });
     const user = await this.userRepository.findOne({
       where: { id: userId },
@@ -172,6 +171,53 @@ export class UserService {
   async remove(id: number): Promise<void> {
     await this.userRepository.delete(id);
   }
+
+  async getFriends(page: number = 1, limit: number = 2, username: string): Promise<UsersFriendsRo> {
+    const user = await this.userRepository.findOne({
+      where: { username: username },
+      relations: ['friends'],
+    });
+    const totalCount = user.friends.length
+    const numberOfPages = Math.ceil(totalCount / limit);
+    const friends = user.friends.slice((page - 1) * limit, page * limit)
+
+    return{
+      friends,
+      page: page,
+      limit: limit,
+      totalCount: totalCount,
+      numberOfPages: numberOfPages
+    }
+  }
+
+  async getSubscribers(page: number = 1, limit: number = 2, username: string): Promise<UsersSubscribersRo> {
+    const user = await this.userRepository.findOne({
+      where: { username: username },
+      relations: ['subscribers'],
+    });
+    const totalCount = user.subscribers.length
+    const numberOfPages = Math.ceil(totalCount / limit);
+    const subscribers = user.subscribers.slice((page - 1) * limit, page * limit)
+
+    return{
+      subscribers,
+      page: page,
+      limit: limit,
+      totalCount: totalCount,
+      numberOfPages: numberOfPages
+    }
+  }
+
+  async getAllFriends(username: string): Promise<User[]> {
+    const user = await this.userRepository.findOne({
+      where: { username: username },
+      relations: ['friends'],
+    });
+
+    return user.friends
+  }
+
+
 
   async createAvatar(filename: string, user: User) {
     await getConnection()
