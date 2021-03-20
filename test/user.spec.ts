@@ -111,5 +111,30 @@ describe('App tests', () => {
         friends: expect.any(Array),
       });
     });
+
+    it('Getting users subscribers', async () => {
+      const user = {
+        username: 'username',
+        email: 'email@mail.ru',
+        password: 'password',
+      };
+      await request(app.getHttpServer())
+        .post('/auth/signup')
+        .send(user)
+        .expect(201);
+
+      const data = await request(app.getHttpServer())
+        .get(`/${user.username}/subscribers`)
+        .expect(200);
+      expect(data.body).toEqual({
+        subscribers: expect.any(Array),
+        page: expect.any(Number),
+        limit: expect.any(Number),
+        totalCount: expect.any(Number),
+        numberOfPages: expect.any(Number),
+      });
+    });
+
+
   });
 });

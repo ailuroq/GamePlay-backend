@@ -70,9 +70,7 @@ export class SnakeGameService {
     );
   }
 
-  async getRatingTable(
-    paginationDto: PaginationDto,
-  ): Promise<PaginatedUserTableResultDto> {
+  async getRatingTable(paginationDto: PaginationDto): Promise<PaginatedUserTableResultDto> {
     const skippedItems = (paginationDto.page - 1) * paginationDto.limit;
 
     const totalCount = await this.snakeGameRepository.count();
