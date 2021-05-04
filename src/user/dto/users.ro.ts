@@ -7,4 +7,5 @@ export class UserRO {
   avatarName: string;
   subscribers?: User[];
   friends?: User[];
+  isFriend?: string;
 }
