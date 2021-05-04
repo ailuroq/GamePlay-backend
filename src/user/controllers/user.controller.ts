@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Request,
-  Post,
-  UseGuards,
-  Get,
-  Body,
-  Param, Query,
-} from '@nestjs/common';
+import { Controller, Request, Post, UseGuards, Get, Body, Param, Query, Delete } from '@nestjs/common';
 import { LocalAuthGuard } from '../../auth/guards/local-auth.guard';
 import { AuthService } from '../../auth/auth.service';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -66,7 +58,7 @@ export class UserController {
     return this.userService.cancelRequest(username, user);
   }
 
-  @Post(':username/deleteFriend')
+  @Delete(':username/deleteFriend')
   @UseGuards(new JwtAuthGuard())
   deleteFriend(@Param('username') username: string, @UserDecorator('id') user: number) {
     return this.userService.deleteFriend(username, user);
@@ -74,21 +66,14 @@ export class UserController {
 
   @Get(':username/friends')
   getUsersFriends(@Query('page') page: number,
-                  @Query('limit') limit: number,
                   @Param('username') username: string) {
-    return this.userService.getFriends(page, limit, username);
-  }
-
-  @Get(':username/allFriends')
-  getAllUsersFriends(@Param('username') username: string) {
-    return this.userService.getAllFriends(username);
+    return this.userService.getFriends(page, username);
   }
 
   @Get(':username/subscribers')
   getUsersSubscribers(@Query('page') page: number,
-                  @Query('limit') limit: number,
                   @Param('username') username: string) {
-    return this.userService.getSubscribers(page, limit, username);
+    return this.userService.getSubscribers(page, username);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -96,6 +81,12 @@ export class UserController {
   async refresh(@AuthUser() user: User) {
     const newUser = await this.userService.findOne(user.username);
     return this.authService.login(newUser);
+  }
+
+  @Get('getCurrentUser/:username')
+  @UseGuards(JwtAuthGuard)
+  getCurrentUserInfo(@Param('username') username: string, @UserDecorator('id') user: number) {
+    return this.userService.getCurrentUser(username, user);
   }
 
 }
