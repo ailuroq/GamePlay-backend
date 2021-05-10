@@ -49,6 +49,17 @@ export class User {
     return responseObject;
   }
 
+  toResponseObjectCurrentUser(showPassword = true): UserRO {
+    const { id, username, email, avatarName, password } = this;
+    const responseObject: any = { id, username, email, avatarName };
+    if (showPassword) {
+      responseObject.password = password;
+      responseObject.subscribers = this.subscribers;
+      responseObject.friends = this.friends;
+    }
+    return responseObject;
+  }
+
   @OneToMany(() => UserGames, (userGames) => userGames.user)
   userGames: UserGames[];
 }

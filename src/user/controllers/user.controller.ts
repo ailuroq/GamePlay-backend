@@ -7,6 +7,7 @@ import { AuthUser } from '../../common/decorators/auth-user.decorator';
 import { User } from '../entities/user.entity';
 import { UserDecorator } from '../decorators/user.decorator';
 import { CreateUserDto } from '../dto/create-user.dto';
+import { QueryDto } from '../dto/QueryDto';
 
 @Controller()
 export class UserController {
@@ -25,6 +26,8 @@ export class UserController {
   async login(@Request() req) {
     return this.authService.login(req.user);
   }
+
+
 
   @Get(':username/')
   getProfile(@Param() params) {
@@ -87,6 +90,11 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   getCurrentUserInfo(@Param('username') username: string, @UserDecorator('id') user: number) {
     return this.userService.getCurrentUser(username, user);
+  }
+
+  @Post('auth/getAllUsers')
+  async usersGet(@Query('page') page: number, @Body() queryDto : QueryDto) {
+    return this.userService.getAllUsers(page, queryDto);
   }
 
 }
