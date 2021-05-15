@@ -1,17 +1,15 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { createQueryBuilder, getConnection, Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { DEFAULT_USER_AVATAR } from '../../app.constants';
-
 import * as bcrypt from 'bcrypt';
-import { UserRO } from '../dto/users.ro';
 import { UsersFriendsRo } from '../dto/usersFriends.ro';
 import { UsersSubscribersRo } from '../dto/usersSubscribers.ro';
-import { SnakeGame } from '../../games/snake/entities/snakeGame.entity';
-import { log } from 'util';
 import { CurrentUserDto } from '../dto/currentUser.dto';
+import { QueryDto } from '../dto/QueryDto';
+import { SnakeGame } from '../../games/snake/entities/snakeGame.entity';
 
 @Injectable()
 export class UserService {
@@ -41,7 +39,8 @@ export class UserService {
     );
   }
 
-  async sendRequest(username: string, userId: number): Promise<UserRO> {
+  async sendRequest(username: string, userId: number): Promise<CurrentUserDto> {
+    let isFriend;
     const userToAdd = await this.userRepository.findOne({
       where: { id: userId },
     });
@@ -52,12 +51,10 @@ export class UserService {
     if (user) {
       if (userToAdd.id !== user.id) {
         if (
-          user.subscribers.filter(
-            (subscriber) => subscriber.id === userToAdd.id,
-          ).length < 1
-        ) {
+          user.subscribers.filter((subscriber) => subscriber.id === userToAdd.id).length < 1) {
           user.subscribers.push(userToAdd);
           await this.userRepository.save(user);
+          isFriend = 'meIsSubscriber';
         } else {
           throw new HttpException(
             'You have already send request to this user',
@@ -70,10 +67,14 @@ export class UserService {
     } else {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
-    return user.toResponseObject(false);
+    return {
+      currentUser: user.toResponseObjectCurrentUser(false),
+      isFriend: isFriend,
+    };
   }
 
-  async acceptRequest(username: string, userId: number) {
+  async acceptRequest(username: string, userId: number): Promise<CurrentUserDto> {
+    let isFriend;
     const userToAddFriend = await this.userRepository.findOne({
       where: { username: username },
       relations: ['subscribers', 'friends'],
@@ -90,6 +91,7 @@ export class UserService {
         userToAddFriend.subscribers = userToAddFriend.subscribers.filter((subscriber) => subscriber.id !== user.id);
         userToAddFriend.friends.push(user);
         await this.userRepository.save(userToAddFriend);
+        isFriend = 'friend';
       } else {
         throw new HttpException(
           'You do not have such subscriber',
@@ -99,9 +101,15 @@ export class UserService {
     } else {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
+
+    return {
+      currentUser: userToAddFriend.toResponseObjectCurrentUser(false),
+      isFriend: isFriend,
+    };
   }
 
-  async cancelRequest(username: string, userId: number): Promise<UserRO> {
+  async cancelRequest(username: string, userId: number): Promise<CurrentUserDto> {
+    let isFriend;
     const userToCancelFriendRequest = await this.userRepository.findOne({
       where: { username: username },
       relations: ['subscribers', 'friends'],
@@ -110,15 +118,10 @@ export class UserService {
       where: { id: userId },
     });
     if (userToCancelFriendRequest) {
-      if (
-        userToCancelFriendRequest.subscribers.filter(
-          (subscriber) => subscriber.id === user.id,
-        ).length === 1
-      ) {
-        userToCancelFriendRequest.subscribers = userToCancelFriendRequest.subscribers.filter(
-          (subscriber) => subscriber.id !== user.id,
-        );
+      if (userToCancelFriendRequest.subscribers.filter((subscriber) => subscriber.id === user.id).length === 1) {
+        userToCancelFriendRequest.subscribers = userToCancelFriendRequest.subscribers.filter((subscriber) => subscriber.id !== user.id);
         await this.userRepository.save(userToCancelFriendRequest);
+        isFriend = 'no';
       } else {
         throw new HttpException(
           'You are not subscriber of this person',
@@ -128,10 +131,14 @@ export class UserService {
     } else {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
-    return userToCancelFriendRequest.toResponseObject(false);
+    return {
+      currentUser: userToCancelFriendRequest.toResponseObjectCurrentUser(false),
+      isFriend: isFriend,
+    };
   }
 
-  async deleteFriend(username: string, userId: number) {
+  async deleteFriend(username: string, userId: number): Promise<CurrentUserDto> {
+    let isFriend;
     const userToDelete = await this.userRepository.findOne({
       where: { username: username },
       relations: ['friends'],
@@ -147,6 +154,7 @@ export class UserService {
         await this.userRepository.save(user);
         userToDelete.friends = userToDelete.friends.filter((friend) => friend.id !== user.id);
         await this.userRepository.save(userToDelete);
+        isFriend = 'subscriber';
       } else {
         throw new HttpException(
           'You do not have such friend, bro',
@@ -156,6 +164,11 @@ export class UserService {
     } else {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
+
+    return {
+      currentUser: userToDelete.toResponseObject(false),
+      isFriend: isFriend,
+    };
   }
 
   async remove(id: number): Promise<void> {
@@ -171,7 +184,6 @@ export class UserService {
     const totalCount = user.friends.length;
     const numberOfPages = Math.ceil(totalCount / 5);
     friends = user.friends.slice((page - 1) * 5, page * 5);
-
 
     return {
       friends,
@@ -232,7 +244,7 @@ export class UserService {
       isFriend = 'friend';
     } else if (loginUser.subscribers.find((item) => item.username === username)) {
       isFriend = 'subscriber';
-    } else if (currentUser.subscribers.find((item) => item.username === username)) {
+    } else if (currentUser.subscribers.find((item) => item.id === userId)) {
       isFriend = 'meIsSubscriber';
     } else {
       isFriend = 'no';
@@ -240,6 +252,30 @@ export class UserService {
     return {
       currentUser: currentUser.toResponseObject(false),
       isFriend: isFriend,
+    };
+  }
+
+  async getAllUsers(page: number = 1, query: QueryDto) {
+        const user = await getConnection()
+      .createQueryBuilder()
+      .select("user")
+      .from(User, "user")
+      .where("user.username ilike :username", { username: query.query + "%"})
+      .limit(5)
+      .offset(5 * (page - 1))
+      .getMany();
+
+    const totalCount = await getConnection()
+      .createQueryBuilder()
+      .select("user")
+      .from(User, "user")
+      .where("user.username ilike :username", { username: query.query + "%"})
+      .getMany();
+
+    return {
+      requestResult: user,
+      currentPage: page,
+      totalPages:  Math.ceil(totalCount.length / 5),
     };
   }
 }
