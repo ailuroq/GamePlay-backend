@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { UserRO } from '../dto/users.ro';
 import { UserGames } from '../../games/common/entities/userGames.entity';
+import { InvitationsEntity } from '../../games/invitations/entities/invitations.entity';
 
 @Entity()
 export class User {
@@ -62,4 +63,8 @@ export class User {
 
   @OneToMany(() => UserGames, (userGames) => userGames.user)
   userGames: UserGames[];
+
+  @OneToMany(type => InvitationsEntity, invitation => invitation.user, { cascade: true })
+  invitations: InvitationsEntity[];
+
 }
