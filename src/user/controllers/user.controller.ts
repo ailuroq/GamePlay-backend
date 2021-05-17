@@ -27,8 +27,6 @@ export class UserController {
     return this.authService.login(req.user);
   }
 
-
-
   @Get(':username/')
   getProfile(@Param() params) {
     return this.userService.findOne(params.username);

@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
-import { Connection } from 'typeorm';
 import { MulterModule } from '@nestjs/platform-express';
 import { GamesModule } from './games/games.module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
+import { InvitationsModule } from './games/invitations/invitations.module';
 
 @Module({
   imports: [
@@ -18,6 +18,7 @@ import { DatabaseModule } from './database/database.module';
     AuthModule,
     UserModule,
     GamesModule,
+    InvitationsModule
   ],
   providers: [AppService],
 })

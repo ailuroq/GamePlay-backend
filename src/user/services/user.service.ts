@@ -22,7 +22,7 @@ export class UserService {
   findOne(username: string): Promise<User> {
     return this.userRepository.findOne({
       where: { username },
-      relations: ['subscribers', 'friends'],
+      relations: ['subscribers', 'friends', 'invitations'],
     });
   }
 
@@ -256,26 +256,26 @@ export class UserService {
   }
 
   async getAllUsers(page: number = 1, query: QueryDto) {
-        const user = await getConnection()
+    const user = await getConnection()
       .createQueryBuilder()
-      .select("user")
-      .from(User, "user")
-      .where("user.username ilike :username", { username: query.query + "%"})
+      .select('user')
+      .from(User, 'user')
+      .where('user.username ilike :username', { username: query.query + '%' })
       .limit(5)
       .offset(5 * (page - 1))
       .getMany();
 
     const totalCount = await getConnection()
       .createQueryBuilder()
-      .select("user")
-      .from(User, "user")
-      .where("user.username ilike :username", { username: query.query + "%"})
+      .select('user')
+      .from(User, 'user')
+      .where('user.username ilike :username', { username: query.query + '%' })
       .getMany();
 
     return {
       requestResult: user,
       currentPage: page,
-      totalPages:  Math.ceil(totalCount.length / 5),
+      totalPages: Math.ceil(totalCount.length / 5),
     };
   }
 
