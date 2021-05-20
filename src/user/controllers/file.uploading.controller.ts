@@ -22,20 +22,20 @@ export class FileUploadingController {
   @UseGuards(JwtAuthGuard)
   @Post('upload/avatar')
   @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (req, file, callback) => {
-          const name = file.originalname.split('.')[0];
-          const fileExtName = extname(file.originalname);
-          const randomName = Array(8)
-            .fill(null)
-            .map(() => Math.round(Math.random() * 16).toString(16))
-            .join('');
-          const finalFileName = `${name}-${randomName}${fileExtName}`;
-          callback(null, finalFileName);
-        },
-      }),
+    FileInterceptor('image', { /**/
+      storage: diskStorage({  /**/
+        destination: './uploads', /**/
+        filename: (req, file, callback) => {  /**/
+          const name = file.originalname.split('.')[0]; /**/
+          const fileExtName = extname(file.originalname); /**/
+          const randomName = Array(8) /**/
+            .fill(null) /**/
+            .map(() => Math.round(Math.random() * 16).toString(16)) /**/
+            .join('');  /**/
+          const finalFileName = `${name}-${randomName}${fileExtName}`;  /**/
+          callback(null, finalFileName);  /**/
+        },  /**/
+      }), /**/
       fileFilter: (req, file, callback) => {
         if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
           return callback(new Error('Only image files are allowed!'), false);
