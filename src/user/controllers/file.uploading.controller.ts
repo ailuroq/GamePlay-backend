@@ -44,8 +44,8 @@ export class FileUploadingController {
       },  /**/
     }),
   )
-  async uploadFile(@UploadedFile() file, @Request() req) {
-    return this.userService.createAvatar(file.filename, req.user);
-  }
+  async uploadFile(@UploadedFile() file, @Request() req) {  /**/
+    return this.userService.createAvatar(file.filename, req.user);  /**/
+  } /**/
 
 }
